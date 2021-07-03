@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:weatherly/models/current_weather_model.dart';
 import 'package:weatherly/network/weather_api_client.dart';
+
+import 'weather_details_container.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -13,136 +16,58 @@ class _HomeScreenState extends State<HomeScreen> {
   final _cityTextController = TextEditingController();
   final _countryTextController = TextEditingController();
 
+  void getWeather(String city, String country) async {
+    final weather = await OpenWeatherMapApiClient()
+        .getCurrentWeather(city: city, countryCode: country);
+
+    setState(() {
+      _currentWeather = weather;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(color: Colors.blue),
-          Column(
+    return Container(
+      color: Colors.blue,
+      child: SafeArea(
+        bottom: false,
+        child: Scaffold(
+          body: Stack(
             children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.3,
-                child: Column(
-                  children: [
-                    buildLocationForm(),
-                    SizedBox(height: 10),
-                    buildLocationDetails(),
-                    buildIcon(),
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.center,
-                ),
-              ),
-              //
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20.0),
-                    ),
+              Container(color: Colors.blue), // background colour
+              Column(
+                children: [
+                  buildMetaDetails(),
+                  Expanded(
+                    child: WeatherDetailsContainer(_currentWeather),
                   ),
-                ),
-              ),
+                ],
+              )
             ],
-          )
-        ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget buildLocationDetails() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: Row(
+  Container buildMetaDetails() {
+    // shows location (with form) and date
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.2,
+      child: Column(
         children: [
-          Icon(
-            Icons.location_pin,
-            size: 50,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildCityName(),
-              buildCountryName(),
-            ],
-          ),
-          Expanded(child: Container()),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              buildTemperature(),
-              buildDescription(),
-            ],
-          )
+          buildLocationForm(),
+          SizedBox(height: 10),
+          buildLocationDetails(),
         ],
         mainAxisAlignment: MainAxisAlignment.center,
       ),
     );
   }
 
-  Text buildCityName() {
-    if (_currentWeather != null) {
-      return Text(
-        "${_currentWeather?.city}",
-        style: TextStyle(fontSize: 30),
-      );
-    }
-    return Text(
-      "--",
-      style: TextStyle(fontSize: 30),
-    );
-  }
-
-  Text buildCountryName() {
-    if (_currentWeather != null) {
-      return Text(
-        "${_currentWeather?.country}",
-        style: TextStyle(fontSize: 20),
-      );
-    }
-    return Text(
-      "--",
-      style: TextStyle(fontSize: 20),
-    );
-  }
-
-  Text buildTemperature() {
-    if (_currentWeather != null) {
-      return Text(
-        "${_currentWeather?.weatherFactors.temp}°F",
-        style: TextStyle(fontSize: 30),
-      );
-    }
-    return Text(
-      "--",
-      style: TextStyle(fontSize: 30),
-    );
-  }
-
-  Text buildDescription() {
-    if (_currentWeather != null) {
-      return Text(
-        "${_currentWeather?.weatherState.description}",
-        style: TextStyle(fontSize: 20),
-      );
-    }
-    return Text(
-      "--",
-      style: TextStyle(fontSize: 20),
-    );
-  }
-
-  Widget buildIcon() {
-    if (_currentWeather != null) {
-      return Image.network(
-          "https://openweathermap.org/img/w/${_currentWeather!.weatherState.icon}.png");
-    }
-    return Icon(Icons.cloud);
-  }
-
   Form buildLocationForm() {
+    // entries for city and country names
     return Form(
       key: _formKey,
       child: Padding(
@@ -177,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: InputDecoration(
         hintText: "City",
         border: InputBorder.none,
-        contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       ),
       validator: (input) {
         if (input == "") {
@@ -192,7 +116,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return TextFormField(
       controller: _countryTextController,
       textAlign: TextAlign.center,
-      textInputAction: TextInputAction.search,
       keyboardType: TextInputType.name,
       decoration: InputDecoration(
         hintText: "Country",
@@ -203,25 +126,62 @@ class _HomeScreenState extends State<HomeScreen> {
 
   IconButton buildSearchButton() {
     return IconButton(
-        icon: Icon(Icons.search),
-        onPressed: () {
-          if (_formKey.currentState!.validate()) {
-            // print(_cityTextController.text);
-            getWeather(_cityTextController.text, _countryTextController.text);
-          }
-        });
+      icon: Icon(Icons.search),
+      onPressed: () {
+        if (_formKey.currentState!.validate()) {
+          getWeather(_cityTextController.text, _countryTextController.text);
+        }
+      },
+    );
   }
 
-  void getWeather(String city, String country) async {
-    final weather = await OpenWeatherMapApiClient()
-        .getCurrentWeather(city: city, countryCode: country);
-
-    setState(() {
-      _currentWeather = weather;
-    });
+  Widget buildLocationDetails() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      child: ListTile(
+        leading: Icon(
+          Icons.location_pin,
+          size: 50,
+        ),
+        title: buildCityName(),
+        subtitle: buildCountryName(),
+        horizontalTitleGap: 0,
+        trailing: buildDate(),
+      ),
+    );
   }
 
-  Widget buildWeatherFactors() {
-    return Column();
+  Text buildCityName() {
+    if (_currentWeather != null) {
+      return Text(
+        "${_currentWeather?.city}",
+        style: TextStyle(fontSize: 20),
+      );
+    }
+    return Text(
+      "--",
+      style: TextStyle(fontSize: 20),
+    );
+  }
+
+  Text buildCountryName() {
+    if (_currentWeather != null) {
+      return Text(
+        "${_currentWeather?.country}",
+        style: TextStyle(fontSize: 20),
+      );
+    }
+    return Text(
+      "--",
+      style: TextStyle(fontSize: 20),
+    );
+  }
+
+  Text buildDate() {
+    final date = DateFormat.yMMMMEEEEd().format(DateTime.now());
+    return Text(
+      date.toString(),
+      style: TextStyle(fontSize: 15),
+    );
   }
 }
