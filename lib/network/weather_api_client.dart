@@ -15,6 +15,7 @@ class OpenWeatherMapApiClient {
       {
         "q": "$city, $countryCode",
         "appid": "$apiKey",
+        "units": "metric",
       };
 
   Future<CurrentWeatherModel> getCurrentWeather({
