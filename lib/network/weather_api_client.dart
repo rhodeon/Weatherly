@@ -18,7 +18,7 @@ class OpenWeatherMapApiClient {
         "units": "metric",
       };
 
-  Future<CurrentWeatherModel> getCurrentWeather({
+  Future<WeatherResponse> getCurrentWeather({
     // Requests for the current weather
     required String city,
     required String countryCode,
@@ -30,6 +30,28 @@ class OpenWeatherMapApiClient {
         setQueryParameters(city, countryCode),
       ),
     );
-    return CurrentWeatherModel.fromJson(json.decode(response.body));
+
+    final responseCode = response.statusCode;
+
+    if (responseCode == 404) {
+      // city not found
+      return WeatherResponse.setErrorCode(responseCode);
+    }
+
+    return WeatherResponse(
+      CurrentWeatherModel.fromJson(json.decode(response.body)),
+      responseCode,
+    );
   }
+}
+
+/// Contains current weather and response
+/// status code for checking if an invalid
+/// city is entered
+class WeatherResponse {
+  CurrentWeatherModel? currentWeather;
+  int statusCode;
+
+  WeatherResponse(this.currentWeather, this.statusCode);
+  WeatherResponse.setErrorCode(this.statusCode); // city not found
 }

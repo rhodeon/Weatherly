@@ -13,6 +13,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _formKey = GlobalKey<FormState>();
   CurrentWeatherModel? _currentWeather;
+  int? _responseCode; // 200 or 404
   final _cityTextController = TextEditingController();
   final _countryTextController = TextEditingController();
 
@@ -21,7 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
         .getCurrentWeather(city: city, countryCode: country);
 
     setState(() {
-      _currentWeather = weather;
+      _currentWeather = weather.currentWeather;
+      _responseCode = weather.statusCode;
     });
   }
 
@@ -39,7 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   buildMetaDetails(),
                   Expanded(
-                    child: WeatherDetailsContainer(_currentWeather),
+                    child:
+                        WeatherDetailsContainer(_currentWeather, _responseCode),
                   ),
                 ],
               )
@@ -51,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Container buildMetaDetails() {
-    // shows location (with form) and date
+    // Shows location (with form) and date
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height * 0.2,
@@ -67,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Form buildLocationForm() {
-    // entries for city and country names
+    // Entries for city and country names
     return Form(
       key: _formKey,
       child: Padding(
@@ -103,12 +106,6 @@ class _HomeScreenState extends State<HomeScreen> {
         hintText: "City",
         border: InputBorder.none,
       ),
-      validator: (input) {
-        if (input == "") {
-          return "Enter a city name";
-        }
-        return null;
-      },
     );
   }
 
@@ -128,9 +125,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return IconButton(
       icon: Icon(Icons.search),
       onPressed: () {
-        if (_formKey.currentState!.validate()) {
-          getWeather(_cityTextController.text, _countryTextController.text);
+        if (_cityTextController.text.trim().isEmpty) {
+          // if no city is typed
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Enter a city name"),
+            ),
+          );
         }
+        getWeather(_cityTextController.text, _countryTextController.text);
       },
     );
   }

@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:weatherly/models/current_weather_model.dart';
 
+/// Widget which displays weather forecast details
 class WeatherDetailsContainer extends StatelessWidget {
   final CurrentWeatherModel? _currentWeather;
+  final int? _responseCode;
 
-  WeatherDetailsContainer(this._currentWeather);
+  WeatherDetailsContainer(this._currentWeather, this._responseCode);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,11 @@ class WeatherDetailsContainer extends StatelessWidget {
   }
 
   Column buildNoLocationDisplay() {
-    // Message shown when no location has been entered
+    // Message shown when no valid location has been entered
+    String errorMessage = "Enter a location";
+    if (_responseCode == 404) {
+      errorMessage = "City not found";
+    }
     return Column(
       children: [
         Icon(
@@ -38,7 +44,7 @@ class WeatherDetailsContainer extends StatelessWidget {
           size: 40,
         ),
         Text(
-          "Enter a Location",
+          errorMessage,
           style: TextStyle(fontSize: 20),
         ),
       ],
@@ -47,7 +53,7 @@ class WeatherDetailsContainer extends StatelessWidget {
   }
 
   Column buildWeatherFactors() {
-    // shows temperature, pressure
+    // Shows temperature, pressure
     // humidity, wind speed and visibility
     return Column(
       children: [
