@@ -11,7 +11,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _formKey = GlobalKey<FormState>();
   CurrentWeatherModel? _currentWeather;
   int? _responseCode; // 200 or 404
   final _cityTextController = TextEditingController();
@@ -69,14 +68,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Form buildLocationForm() {
     // Entries for city and country names
     return Form(
-      key: _formKey,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
           children: [
-            Expanded(child: buildRoundedContainer(buildCityField())),
+            Expanded(child: buildLocationField(_cityTextController, "City")),
             Container(width: 10),
-            Expanded(child: buildRoundedContainer(buildCountryField())),
+            Expanded(
+                child: buildLocationField(_countryTextController, "Country")),
             buildSearchButton()
           ],
         ),
@@ -84,37 +83,28 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget buildLocationField(TextEditingController controller, String hint) {
+    return buildRoundedContainer(
+      TextFormField(
+        controller: controller,
+        textAlign: TextAlign.center,
+        textInputAction: TextInputAction.next,
+        keyboardType: TextInputType.name,
+        decoration: InputDecoration(
+          hintText: hint,
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+
   Container buildRoundedContainer(TextFormField textField) {
+    // Container to wrap location textfields
     return Container(
       decoration: BoxDecoration(
           color: Colors.black.withAlpha(50),
           borderRadius: BorderRadius.all(Radius.circular(50.0))),
       child: textField,
-    );
-  }
-
-  TextFormField buildCityField() {
-    return TextFormField(
-      controller: _cityTextController,
-      textAlign: TextAlign.center,
-      textInputAction: TextInputAction.next,
-      keyboardType: TextInputType.name,
-      decoration: InputDecoration(
-        hintText: "City",
-        border: InputBorder.none,
-      ),
-    );
-  }
-
-  TextFormField buildCountryField() {
-    return TextFormField(
-      controller: _countryTextController,
-      textAlign: TextAlign.center,
-      keyboardType: TextInputType.name,
-      decoration: InputDecoration(
-        hintText: "Country",
-        border: InputBorder.none,
-      ),
     );
   }
 

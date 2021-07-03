@@ -110,7 +110,7 @@ class WeatherDetailsContainer extends StatelessWidget {
 
   Text buildTemperature() {
     return Text(
-      "${_currentWeather!.weatherFactors.temp}°F",
+      "${_currentWeather!.weatherFactors.temp}°C",
       style: TextStyle(fontSize: 30),
     );
   }
