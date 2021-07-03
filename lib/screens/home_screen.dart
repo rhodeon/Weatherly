@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
+          resizeToAvoidBottomInset: false,
         ),
       ),
     );
@@ -140,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget buildLocationDetails() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
       child: ListTile(
         leading: Icon(
           Icons.location_pin,

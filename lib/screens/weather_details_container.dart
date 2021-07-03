@@ -126,6 +126,8 @@ class WeatherDetailsContainer extends StatelessWidget {
     final String iconBaseUrl = "https://openweathermap.org/img/w/";
     final String iconExtension = ".png";
     return FadeInImage.memoryNetwork(
+      height: 50,
+      width: 50,
         placeholder: kTransparentImage,
         image:
             "$iconBaseUrl${_currentWeather!.weatherState.icon}$iconExtension");

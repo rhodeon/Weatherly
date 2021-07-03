@@ -3,8 +3,8 @@ class CurrentWeatherModel {
   late final String country; // country code
   late final WeatherState weatherState; // weather
   late final WeatherFactors weatherFactors; // main
-  late final double windSpeed;
-  late final int visibility;
+  late final num windSpeed;
+  late final num visibility;
 
   CurrentWeatherModel.fromJson(Map<String, dynamic> parsedJson) {
     this.city = parsedJson["name"];
@@ -31,9 +31,9 @@ class WeatherState {
 }
 
 class WeatherFactors {
-  late final double temp;
-  late final int pressure;
-  late final int humidity;
+  late final num temp;
+  late final num pressure;
+  late final num humidity;
 
   WeatherFactors.fromJson(Map<String, dynamic> parsedJson) {
     this.temp = parsedJson["temp"]!;
