@@ -34,18 +34,13 @@ class _HomeScreenState extends State<HomeScreen> {
       child: SafeArea(
         bottom: false,
         child: Scaffold(
-          body: Stack(
+          backgroundColor: Colors.transparent,
+          body: Column(
             children: [
-              Container(color: Colors.blue), // background colour
-              Column(
-                children: [
-                  buildMetaDetails(),
-                  Expanded(
-                    child:
-                        WeatherDetailsContainer(_currentWeather, _responseCode),
-                  ),
-                ],
-              )
+              buildMetaDetails(),
+              Expanded(
+                child: WeatherDetailsContainer(_currentWeather, _responseCode),
+              ),
             ],
           ),
         ),
@@ -57,7 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
     // Shows location (with form) and date
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.2,
+      height: MediaQuery.of(context).size.height * 0.25,
+      padding: EdgeInsets.only(top: 10),
       child: Column(
         children: [
           buildLocationForm(),
@@ -121,20 +117,24 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  IconButton buildSearchButton() {
-    return IconButton(
-      icon: Icon(Icons.search),
-      onPressed: () {
-        if (_cityTextController.text.trim().isEmpty) {
-          // if no city is typed
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Enter a city name"),
-            ),
-          );
-        }
-        getWeather(_cityTextController.text, _countryTextController.text);
-      },
+  Material buildSearchButton() {
+    return Material(
+      color: Colors.transparent,
+      child: IconButton(
+        icon: Icon(Icons.search),
+        onPressed: () {
+          if (_cityTextController.text.trim().isEmpty) {
+            // if no city is typed
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Enter a city name"),
+              ),
+            );
+          } else {
+            getWeather(_cityTextController.text, _countryTextController.text);
+          }
+        },
+      ),
     );
   }
 

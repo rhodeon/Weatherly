@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:weatherly/models/current_weather_model.dart';
 
 /// Widget which displays weather forecast details
@@ -58,7 +59,7 @@ class WeatherDetailsContainer extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(30.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -77,7 +78,7 @@ class WeatherDetailsContainer extends StatelessWidget {
         ListTile(
           leading: FaIcon(FontAwesomeIcons.gasPump),
           title: Text("Pressure"),
-          trailing: Text("${_currentWeather?.weatherFactors.pressure}"),
+          trailing: Text("${_currentWeather?.weatherFactors.pressure} hPa"),
         ),
         //
         buildHorizontalDivider(),
@@ -85,7 +86,7 @@ class WeatherDetailsContainer extends StatelessWidget {
         ListTile(
           leading: FaIcon(FontAwesomeIcons.water),
           title: Text("Humidity"),
-          trailing: Text("${_currentWeather?.weatherFactors.humidity}"),
+          trailing: Text("${_currentWeather?.weatherFactors.humidity} %"),
         ),
         //
         buildHorizontalDivider(),
@@ -93,7 +94,7 @@ class WeatherDetailsContainer extends StatelessWidget {
         ListTile(
           leading: FaIcon(FontAwesomeIcons.wind),
           title: Text("Wind Speed"),
-          trailing: Text("${_currentWeather?.windSpeed}"),
+          trailing: Text("${_currentWeather?.windSpeed} m/s"),
         ),
         //
         buildHorizontalDivider(),
@@ -101,7 +102,7 @@ class WeatherDetailsContainer extends StatelessWidget {
         ListTile(
           leading: FaIcon(FontAwesomeIcons.lowVision),
           title: Text("Visibility"),
-          trailing: Text("${_currentWeather?.visibility}"),
+          trailing: Text("${_currentWeather?.visibility} m"),
         ),
       ],
     );
@@ -124,16 +125,17 @@ class WeatherDetailsContainer extends StatelessWidget {
   Widget buildWeatherIcon() {
     final String iconBaseUrl = "https://openweathermap.org/img/w/";
     final String iconExtension = ".png";
-    return Image.network(
-        iconBaseUrl + _currentWeather!.weatherState.icon + iconExtension);
+    return FadeInImage.memoryNetwork(
+        placeholder: kTransparentImage,
+        image:
+            "$iconBaseUrl${_currentWeather!.weatherState.icon}$iconExtension");
   }
 
   Container buildHorizontalDivider() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20),
-      height: 10,
       child: Divider(
-        height: 10,
+        height: 20,
         color: Colors.black,
       ),
     );
