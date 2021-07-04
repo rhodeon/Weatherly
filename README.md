@@ -1,5 +1,6 @@
 # Weatherly
 Task submission for week 2 of SideHustle Mobile Application Development Track.
+The Android build can be downloaded and tested from the "releases" section.
 <br>
 
 # Screenshots
