@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.rhodeon.weatherly">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="weatherly"
+        android:label="Weatherly"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
